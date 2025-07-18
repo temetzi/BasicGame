@@ -1,5 +1,6 @@
 // using System;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +8,11 @@ public class Player : MonoBehaviour
 {
     public bool jumpKeyWasPressed;
     public int moveSpeed;
+
+    public GameObject winScreen;
+    public GameObject gameOverScreen;
+    public int score = 0;
+    public GameObject scoreText;
     
     public float horizontalInput;
     public Rigidbody rigidbodyComponent;
@@ -19,6 +25,8 @@ public class Player : MonoBehaviour
     void Start()
     {
         rigidbodyComponent = GetComponent<Rigidbody>();
+        winScreen.SetActive(false);
+        gameOverScreen.SetActive(false);
     }
 
     // Update is called once per frame
@@ -33,6 +41,13 @@ public class Player : MonoBehaviour
         }
         
         horizontalInput = Input.GetAxis("Horizontal");
+    }
+
+    public void Death()
+    {
+        if (gameObject == null) {
+            return;
+        }
     }
 
     private void FixedUpdate()
@@ -61,16 +76,34 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.layer == 7) 
+        {
+            gameOverScreen.SetActive(true);
+            gameObject.SetActive(false);
+            
+        }
+        
         if (other.gameObject.layer == 9) 
         {
             Destroy(other.gameObject);
             superJumpsRemaining++;
         }
         
+        if (other.gameObject.layer == 11) 
+        {
+            Destroy(other.gameObject);
+            score++;
+            scoreText.GetComponent<TextMeshProUGUI>().text = "Score: " + score.ToString();
+            // Debug.Log(score);
+            
+        }
+        
+        // GameOver Screen
         if (other.gameObject.layer == 10) 
         {
             Destroy(other.gameObject);
-            SceneManager.LoadScene("StartScene");
+            winScreen.SetActive(true);
+            gameObject.SetActive(false);
         }
     }
 }
