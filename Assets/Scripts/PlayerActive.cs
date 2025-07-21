@@ -3,8 +3,11 @@ using UnityEngine.SceneManagement;
 public class PlayerActive : MonoBehaviour
 {
     public GameObject player;
+    public CameraController cameraController;
 
     public GameObject GameOverScreen;
+    public GameObject WinScreen;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,10 +24,28 @@ public class PlayerActive : MonoBehaviour
             }
             else
             {
-                // GameOverScreen.SetActive(true);
+                Death();
             }
             
         }
             
+    }
+
+    public void Win()
+    {
+        Debug.Log("win");
+        // player.SetActive(false);
+        Time.timeScale = 0;
+        WinScreen.SetActive(true);
+    }
+
+    public void Death()
+    {
+        Debug.Log("dead");
+        cameraController.UnParentCamera();
+        // player.SetActive(false);
+        Destroy(player);
+        GameOverScreen.SetActive(true);
+        Time.timeScale = 0;
     }
 }

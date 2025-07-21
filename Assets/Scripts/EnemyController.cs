@@ -9,8 +9,8 @@ public class EnemyController : MonoBehaviour
     public bool hasLineOfSight = false;
     public bool isAtDistance = false;
     public float detectionRange = 5f;
-    public float enemySpeed = 2f;
 
+    public float enemySpeed = 2f;
     public float leftBoundary;
     public float rightBoundary;
     private int direction = 1;
@@ -74,8 +74,7 @@ public class EnemyController : MonoBehaviour
     {
         Physics.Raycast(transform.position, player.transform.position - transform.position, out RaycastHit hit, layerMask);
         Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.white);
-        // Debug.Log(hit.collider.gameObject.name);
-        
+        Debug.Log(hit.collider.gameObject.name);
         if (hit.collider.gameObject.CompareTag("Player"))
         {
             hasLineOfSight = true;

@@ -24,7 +24,7 @@ public class ElevatorController : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         activateElevator = false;
         playerOnElevator = false;
-        elevatorAtTop = true;
+        elevatorAtTop = false;
     }
 
     // Update is called once per frame
@@ -90,12 +90,12 @@ public class ElevatorController : MonoBehaviour
                 // playerOnElevator = false;
                 // Debug.Log("yl�s");
 
-                if (transform.position.y > topPoint.transform.position.y)
+                if (transform.position.y == topPoint.transform.position.y)
                 {
                     // transform.position = Vector3.MoveTowards(transform.position, topPoint.transform.position, elevatorSpeed * Time.deltaTime);
                     activateElevator = false;
                     elevatorAtTop = true;
-                    Debug.Log(transform.position.y);
+                    Debug.Log("elevator at top");
 
                 }
                 // elevatorAtTop = true;
@@ -123,10 +123,11 @@ public class ElevatorController : MonoBehaviour
                 if (playerOnElevator == false && orderElevator == true && playerAtTop == true)
                 {
                     
-                    transform.position = Vector3.MoveTowards(transform.position, topPoint.transform.position, elevatorSpeed * Time.deltaTime);
+                    
                     //Debug.Log("Hissi tilattu yl�s");
                     if (transform.position.y >= topPoint.transform.position.y)
                     {
+                        transform.position = Vector3.MoveTowards(transform.position, topPoint.transform.position, elevatorSpeed * Time.deltaTime);
                         orderElevator = false;
                         elevatorAtTop = true;
                         Debug.Log(transform.position.y);

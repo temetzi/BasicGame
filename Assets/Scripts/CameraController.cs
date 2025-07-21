@@ -23,4 +23,9 @@ public class CameraController : MonoBehaviour
             transform.position = player.transform.position + offset;
         }
     }
+
+    public void UnParentCamera()
+    {
+       gameObject.transform.SetParent(null, true);
+    }
 }

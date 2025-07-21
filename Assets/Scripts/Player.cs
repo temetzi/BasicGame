@@ -27,14 +27,16 @@ public class Player : MonoBehaviour
     public bool wallJump = false;
 
     public float maxSpeed = 1f;
-
+    public PlayerActive playerActive;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Time.timeScale = 1;
         rigidbodyComponent = GetComponent<Rigidbody>();
         winScreen.SetActive(false);
         gameOverScreen.SetActive(false);
+        
     }
 
     // Update is called once per frame
@@ -69,21 +71,14 @@ public class Player : MonoBehaviour
             
         }
 
-        
-
         else
         {
             grounded = true;
             //Debug.Log("IsGrounded");
         }
-     
-
-        
-
+         
         if (jumpKeyWasPressed && grounded == true)
-        {
-
-            
+        {          
             if (superJumpsRemaining > 0)
             {
                 jumpPower *= 2;
@@ -115,11 +110,17 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
+        // layer 6 = Enemy
+        if (other.gameObject.layer == 6)
+        {
+            playerActive.Death();
+
+        }
+
+        // layer 7 == fell out of map
         if (other.gameObject.layer == 7) 
         {
-            gameOverScreen.SetActive(true);
-            gameObject.SetActive(false);
+            playerActive.Death();
             
         }
         
@@ -128,7 +129,15 @@ public class Player : MonoBehaviour
             Destroy(other.gameObject);
             superJumpsRemaining++;
         }
-        
+
+        // level complete object
+        if (other.gameObject.layer == 10)
+        {
+            Destroy(other.gameObject);
+            playerActive.Win();
+        }
+
+        // Score layer
         if (other.gameObject.layer == 11) 
         {
             Destroy(other.gameObject);
@@ -137,23 +146,12 @@ public class Player : MonoBehaviour
             // Debug.Log(score);
             
         }
-        
-        // GameOver Screen
-        if (other.gameObject.layer == 10) 
-        {
-            Destroy(other.gameObject);
-            winScreen.SetActive(true);
-            gameObject.SetActive(false);
-        }
-        
-        
-
+                            
         if (other.gameObject.layer == 14)
         {
             wallJump = true;
             Debug.Log("jump = true");
         }
-
         
     }
 
