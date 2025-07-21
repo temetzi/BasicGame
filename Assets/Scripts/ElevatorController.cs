@@ -88,11 +88,11 @@ public class ElevatorController : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, topPoint.transform.position, elevatorSpeed * Time.deltaTime);
                 // activateElevator = false;
                 // playerOnElevator = false;
-                // Debug.Log("ylös");
+                // Debug.Log("ylï¿½s");
 
                 if (transform.position.y > topPoint.transform.position.y)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, topPoint.transform.position, elevatorSpeed * Time.deltaTime);
+                    // transform.position = Vector3.MoveTowards(transform.position, topPoint.transform.position, elevatorSpeed * Time.deltaTime);
                     activateElevator = false;
                     elevatorAtTop = true;
                     Debug.Log(transform.position.y);
@@ -117,13 +117,14 @@ public class ElevatorController : MonoBehaviour
             }
         }
 
-        if (orderElevator == true && playerOnElevator == false)
+        if (orderElevator == true && playerOnElevator == false && transform.position.y <= topPoint.transform.position.y)
         {        
                 
                 if (playerOnElevator == false && orderElevator == true && playerAtTop == true)
                 {
+                    
                     transform.position = Vector3.MoveTowards(transform.position, topPoint.transform.position, elevatorSpeed * Time.deltaTime);
-                    //Debug.Log("Hissi tilattu ylös");
+                    //Debug.Log("Hissi tilattu ylï¿½s");
                     if (transform.position.y >= topPoint.transform.position.y)
                     {
                         orderElevator = false;

@@ -21,7 +21,7 @@ public class PlayerActive : MonoBehaviour
             }
             else
             {
-                GameOverScreen.SetActive(true);
+                // GameOverScreen.SetActive(true);
             }
             
         }

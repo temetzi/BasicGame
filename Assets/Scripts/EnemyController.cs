@@ -11,23 +11,32 @@ public class EnemyController : MonoBehaviour
     public float detectionRange = 5f;
     public float enemySpeed = 2f;
 
+    public float leftBoundary;
+    public float rightBoundary;
+    private int direction = 1;
+    public float startingPosition;
+    
+        
+        
     public float enemyRange;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
         player = GameObject.FindGameObjectWithTag("Player");
+        startingPosition = transform.position.x;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
         if (hasLineOfSight && isAtDistance) {
             transform.position = Vector2.MoveTowards(transform.position, player.transform.position, enemySpeed * Time.deltaTime);
         }
-        
-        
+
+        else {
+            
+            EnemyPatrol();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -36,6 +45,29 @@ public class EnemyController : MonoBehaviour
         {
             other.gameObject.SetActive(false);
         }    
+    }
+
+    private void EnemyPatrol()
+    {
+        // moving left
+         
+        transform.Translate(Vector3.right * direction * enemySpeed * Time.deltaTime);
+
+        // Check for boundaries and reverse direction if needed
+        if (transform.position.x < startingPosition - leftBoundary)
+        {
+            direction = 1;
+            // Debug.Log("vasemalla");
+            // Debug.Log(direction);
+        }
+        else if (transform.position.x > startingPosition + rightBoundary)
+        {
+            direction = -1;
+            //Debug.Log("oikealla");
+            //Debug.Log(direction);
+        }
+        
+        
     }
 
     private void FixedUpdate()
@@ -57,7 +89,6 @@ public class EnemyController : MonoBehaviour
             else {
                 isAtDistance = false;
             }
-            
         }
 
         else {
