@@ -40,6 +40,8 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        
         if (Input.GetKeyDown(KeyCode.Space)) {
             jumpKeyWasPressed = true;
         }
@@ -49,14 +51,12 @@ public class Player : MonoBehaviour
         }
         
         horizontalInput = Input.GetAxis("Horizontal");
+
+        
+
     }
 
-    public void Death()
-    {
-        if (gameObject == null) {
-            return;
-        }
-    }
+    
 
     private void FixedUpdate()
     {
@@ -145,6 +145,8 @@ public class Player : MonoBehaviour
             winScreen.SetActive(true);
             gameObject.SetActive(false);
         }
+        
+        
 
         if (other.gameObject.layer == 14)
         {
