@@ -38,15 +38,12 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded = true;
     public bool doubleJump = true;
     
-
-
     private void Start()
     {
         Time.timeScale = 1;
         player = GameObject.FindGameObjectWithTag("Player");
         rb = player.GetComponent<Rigidbody>();
     }
-
 
     void Update()
     {
@@ -56,63 +53,69 @@ public class PlayerController : MonoBehaviour
                 
                 if (isGrounded == true && Input.GetKeyDown(KeyCode.Space)) {
                     currentState = PlayerState.Jump;
+                    Debug.Log("PlayerState Jump");
                 }
                 
                 if (isGrounded == false && doubleJump && Input.GetKeyDown(KeyCode.Space)) {
                     currentState = PlayerState.DoubleJump;
+                    Debug.Log("PlayerState DoubleJump");
                 }
 
                 if (isGrounded) {
                     doubleJump = true;
                 }
                 
-                if (Input.GetKey(KeyCode.A)) {
-                    // currentState = PlayerState.Idle;
-                    rb.AddForce(Vector3.left * (moveSpeed * Time.deltaTime), ForceMode.VelocityChange);
-                    
-                    // Debug.Log("Move left");
+                if (Input.GetKey(KeyCode.A)) {                 
+                    rb.AddForce(Vector3.left * (moveSpeed * Time.deltaTime), ForceMode.VelocityChange);                  
+                    Debug.Log("Move left");
                 }
 
-                else if (Input.GetKey(KeyCode.D)) {
-                    // currentState = PlayerState.Idle;
-                    // moveDirection = false;
-                    // Debug.Log("Move Right");
+                else if (Input.GetKey(KeyCode.D)) 
+                {                 
                     rb.AddForce(Vector3.right * (moveSpeed * Time.deltaTime), ForceMode.VelocityChange);
+                    Debug.Log("Move right");
                 }
                 
-                else {
-                    
-
-                    // if (rb.linearVelocity.magnitude > 0) // Check if the object is moving
-                    
+                else 
+                {                                                   
                     Vector3 movementDirection = rb.linearVelocity;
                     movementDirection.Normalize();
                     movementDirection.y = 0f;
-                    // Debug.Log(movementDirection);
-                    if (rb.linearVelocity.x > 0.1 || rb.linearVelocity.x < -0.1) {
+                    
+                   
+                    //if (rb.linearVelocity.x > 0.001 || rb.linearVelocity.x < -0.001) {
+                    //    rb.AddForce(-movementDirection * stopForce);                     
+                    //}
+
+                    if (rb.linearVelocity.x > 0.1)
+                    {
                         rb.AddForce(-movementDirection * stopForce);
-                        // Debug.Log(rb.linearVelocity.x);
                     }
 
+                    else if (rb.linearVelocity.x < -0.1)
+                    {
+                        rb.AddForce(-movementDirection * stopForce);
+                    }
 
+                    else
+                    {
+                        rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+                        // Debug.Log("Stopped");
+                    }
                 } 
                 break;
             
-            case PlayerState.Jump:
-                // Debug.Log("PlayerState = Jump");
+            case PlayerState.Jump:              
                 rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
                 currentState = PlayerState.Idle;
-                // currentState = PlayerState.Idle;
+                Debug.Log("PlayerState Idle");               
                 break;
             
-            case PlayerState.DoubleJump:
-                // Debug.Log("PlayerState = DoubleJump");
-                rb.AddForce(Vector3.up * doubleJumpForce, ForceMode.VelocityChange);
-                
-                // rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.y, 1f, 15f), rb.linearVelocity.x);
-                // Debug.Log(rb.linearVelocity.y);
+            case PlayerState.DoubleJump:               
+                rb.AddForce(Vector3.up * doubleJumpForce, ForceMode.VelocityChange);                            
                 doubleJump = false;
                 currentState = PlayerState.Idle;
+                Debug.Log("PlayerState Idle");
                 break;
             
             case PlayerState.Attack:
@@ -123,28 +126,20 @@ public class PlayerController : MonoBehaviour
     }
 
     void FixedUpdate()
-    {
-        // Debug.Log("notGrounded");
-        if (Physics.OverlapSphere(groundCheckTransform.position, 0.1f, playerMask).Length == 0) {
-            isGrounded = false;
-            // Debug.Log("notGrounded");
-            
+    {      
+        if (Physics.OverlapSphere(groundCheckTransform.position, 0.1f, playerMask).Length == 0) 
+        {
+            isGrounded = false;                    
         }
 
         else
         {
-            isGrounded = true;
-            // Debug.Log("IsGrounded");
+            isGrounded = true;          
         }
-        
-        
-        // rb.linearVelocity = new Vector2 (Mathf.Clamp(rb.linearVelocity.x, 0 - moveSpeed, maxMoveSpeed), rb.linearVelocity.y);
-
+                       
         if (rb.linearVelocity.magnitude > 0) {
-            rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -maxMoveSpeed , maxMoveSpeed), rb.linearVelocity.y);
-            // Debug.Log(rb.linearVelocity.x);
-        }
-        // Debug.Log(rb.linearVelocity.x);
+            rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -maxMoveSpeed , maxMoveSpeed), rb.linearVelocity.y);          
+        }    
     }
     
     private void OnTriggerEnter(Collider other)
