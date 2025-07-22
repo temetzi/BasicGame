@@ -12,8 +12,11 @@ public class Player : MonoBehaviour
 
     public GameObject winScreen;
     public GameObject gameOverScreen;
+    
     public int score = 0;
     public GameObject scoreText;
+    
+    
     public float jumpPower = 10f;
     
     public float horizontalInput;

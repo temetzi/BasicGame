@@ -1,4 +1,6 @@
+using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -6,6 +8,7 @@ public enum EnemyState
 {
     Idle,
     Patrol,
+    LookForPlayer,
     Chase,
     Attack
 }
@@ -15,7 +18,8 @@ public class EnemyAI : MonoBehaviour
 {
     public EnemyState currentState = EnemyState.Idle;
     public Transform player; // Drag the player object into this field in the inspector
-
+    private Vector3 playerPos;
+    
     // enemy stuff
     public LayerMask layerMask;
     private bool hasLineOfSight = false;
@@ -31,17 +35,27 @@ public class EnemyAI : MonoBehaviour
     public float rightBoundary;
     private int direction = 1;
     private float startingPosition;
+    private float startPositionZ;
+    
+    private float startPositionY;
+    
     private Renderer enemyColor;
 
     private void Start()
     {
         startingPosition = transform.position.x;
+        startPositionZ = transform.position.z;
+        startPositionY = transform.position.y;
         enemyColor = gameObject.GetComponent<Renderer>();
+        
     }
 
 
     void Update()
     {
+        gameObject.transform.position.Set(transform.position.x, startPositionY, startPositionZ);
+        
+        
         switch (currentState)
         {
             case EnemyState.Idle:
@@ -89,24 +103,64 @@ public class EnemyAI : MonoBehaviour
 
 
                 break;
+            case EnemyState.LookForPlayer:
+                
+                
+                IEnumerator CoUpdate()
+                {
+                    if (hasLineOfSight == false) {
+                        yield return new WaitForSeconds(0.5f);
+                        Debug.Log("wait for 0.25");
+                        currentState = EnemyState.Patrol;
+                    }
+
+                    else {
+                        Debug.Log("not looking for player");
+                        // yield return new WaitForSeconds(1);
+                        // currentState = EnemyState.Patrol;
+                    }
+
+                    // currentState = EnemyState.Patrol;
+                    yield return null;
+                    
+                }
+                // currentState = EnemyState.Patrol;
+                break;
 
             case EnemyState.Chase:
                 // Implement Chase behavior here (e.g., move towards the player)
                 enemyColor.material.SetColor("_Color", Color.red);
+                
+                
+                Vector3 playerPos = new Vector3(player.transform.position.x, 0, player.transform.position.z);
+                
+                
+                transform.position = Vector2.MoveTowards(transform.position, playerPos, chaseSpeed * Time.deltaTime);
+                
+                if (Vector3.Distance(transform.position, player.position) > chaseDistance) {
+                        currentState = EnemyState.Patrol; //Go back to patrol if player gets too far
+                        Debug.Log("Patrol state");
+                        // Debug.Log(playerPos);
+                }
+                
+                
+                
+                
 
-                transform.position = Vector2.MoveTowards(transform.position, player.transform.position,chaseSpeed * Time.deltaTime);
-                if (Vector3.Distance(transform.position, player.position) > chaseDistance * 1.25)
-                {
-                    currentState = EnemyState.Patrol; //Go back to patrol if player gets too far
-                    Debug.Log("Patrol state");
+                if (hasLineOfSight == false) {
+                        // currentState = EnemyState.LookForPlayer; //Go back to patrol if loses sight
+                        // StartCoroutine(CoUpdate());
+                        // Debug.Log("Look for player state");
+                        currentState = EnemyState.Patrol;
                 }
 
-                if (hasLineOfSight == false)
-                {
-                    currentState = EnemyState.Patrol; //Go back to patrol if player gets too far
-                    Debug.Log("Lost sight, return to patrol");
+                else {
+                    // currentState = EnemyState.Patrol;
                 }
+                
 
+                
+                // currentState = EnemyState.Patrol;
                 break;
 
             case EnemyState.Attack:
@@ -145,4 +199,5 @@ public class EnemyAI : MonoBehaviour
 
 
     }
+    
 }

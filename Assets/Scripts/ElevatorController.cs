@@ -21,7 +21,9 @@ public class ElevatorController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) {
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
         activateElevator = false;
         playerOnElevator = false;
         elevatorAtTop = false;
@@ -41,7 +43,9 @@ public class ElevatorController : MonoBehaviour
 
         }
 
-        playerY = player.transform.position.y;
+        if (player != null) {
+            playerY = player.transform.position.y;
+        }
 
         if (playerY > (topPoint.transform.position.y / 2))
         {
@@ -150,8 +154,4 @@ public class ElevatorController : MonoBehaviour
                 }
         }
     }
-
-    
-    
-
 }
