@@ -149,7 +149,7 @@ public class EnemyAI : MonoBehaviour
                         currentState = EnemyState.Patrol;
                     }                  
                 }
-                    break;
+                break;
 
             case EnemyState.LookFor:
                 // Debug.Log("look for state");
@@ -171,7 +171,7 @@ public class EnemyAI : MonoBehaviour
                     // currentState = EnemyState.Patrol;
                 }
 
-                    break;
+                break;
 
             case EnemyState.Attack:
                 // Implement Attack behavior here (e.g., deal damage to the player)

@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     public Transform groundCheckTransform;
     public PlayerActive playerActive;
+    public AudioSource audioSource;
     
     // Score
     public int score = 0;
@@ -36,6 +37,11 @@ public class PlayerController : MonoBehaviour
     
     // public bool moveDirection;
     public bool isGrounded = true;
+    public bool IsMoving = false;
+    
+    bool mybool;
+    bool checkit;
+    
     public bool doubleJump = true;
     
     private void Start()
@@ -47,18 +53,65 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (isGrounded != checkit) {
+            checkit = isGrounded;
+
+            // print("my bool has changed to: " + isGrounded);
+            // audioSource.
+            if (isGrounded == true) {
+                // Debug.Log("landed");
+                AudioManager.Instance.playSFX("Jump");
+
+            }
+        }
+
+        if (IsMoving && isGrounded) {
+            
+            if (!audioSource.isPlaying && IsMoving)
+            {
+                // AudioManager.Instance.playSFX("Walk");
+                AudioManager.Instance.playWalk("Walk");
+            }
+
+            else {
+                // audioSource.Stop();
+            }
+        }
+
+        else {
+            // audioSource.gameObject.SetActive(false);
+            audioSource.Stop();
+            // Debug.Log("audio stop");
+        }
+        
+        
+        
+        
+
+        if (rb.linearVelocity.y == 0 && rb.linearVelocity.x > 0.1f || rb.linearVelocity.x < -0.1f) {
+            IsMoving = true;
+        }
+
+        else {
+            IsMoving = false;
+        }
+
+
+
         switch (currentState) {
             case PlayerState.Idle:
+                // checkit = false;
                 // Debug.Log("PlayerState = Idle");
+                // isJumping = false;
                 
                 if (isGrounded == true && Input.GetKeyDown(KeyCode.Space)) {
                     currentState = PlayerState.Jump;
-                    Debug.Log("PlayerState Jump");
+                    // Debug.Log("PlayerState Jump");
                 }
                 
                 if (isGrounded == false && doubleJump && Input.GetKeyDown(KeyCode.Space)) {
                     currentState = PlayerState.DoubleJump;
-                    Debug.Log("PlayerState DoubleJump");
+                    // Debug.Log("PlayerState DoubleJump");
                 }
 
                 if (isGrounded) {
@@ -67,13 +120,13 @@ public class PlayerController : MonoBehaviour
                 
                 if (Input.GetKey(KeyCode.A)) {                 
                     rb.AddForce(Vector3.left * (moveSpeed * Time.deltaTime), ForceMode.VelocityChange);                  
-                    Debug.Log("Move left");
+                    // Debug.Log("Move left");
                 }
 
                 else if (Input.GetKey(KeyCode.D)) 
                 {                 
                     rb.AddForce(Vector3.right * (moveSpeed * Time.deltaTime), ForceMode.VelocityChange);
-                    Debug.Log("Move right");
+                    // Debug.Log("Move right");
                 }
                 
                 else 
@@ -102,20 +155,25 @@ public class PlayerController : MonoBehaviour
                         rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
                         // Debug.Log("Stopped");
                     }
-                } 
+                }
+
+                
+                
                 break;
             
-            case PlayerState.Jump:              
+            case PlayerState.Jump:
+                // checkit = true;
                 rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+                // checkit = true;
                 currentState = PlayerState.Idle;
-                Debug.Log("PlayerState Idle");               
+                // Debug.Log("PlayerState Idle");               
                 break;
             
             case PlayerState.DoubleJump:               
                 rb.AddForce(Vector3.up * doubleJumpForce, ForceMode.VelocityChange);                            
                 doubleJump = false;
                 currentState = PlayerState.Idle;
-                Debug.Log("PlayerState Idle");
+                // Debug.Log("PlayerState Idle");
                 break;
             
             case PlayerState.Attack:
@@ -134,7 +192,8 @@ public class PlayerController : MonoBehaviour
 
         else
         {
-            isGrounded = true;          
+            isGrounded = true;
+            // mybool = true;
         }
                        
         if (rb.linearVelocity.magnitude > 0) {
