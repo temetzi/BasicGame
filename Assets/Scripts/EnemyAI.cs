@@ -56,7 +56,13 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        if (player == null)
+        {
+            gameObject.SetActive(false);
+        }
+        
         gameObject.transform.position.Set(transform.position.x, startPositionY, startPositionZ);
+        
         
         
         switch (currentState)
@@ -65,12 +71,15 @@ public class EnemyAI : MonoBehaviour
                 // enemyColor.material.SetColor("_Color", Color.yellow);
                 // enemyColor.material.SetColor("_Color", Color.red);
                 // Implement Idle behavior here (e.g., do nothing)
-                if (Vector3.Distance(transform.position, player.position) < detectionRange && player != null)
-                {
-                    Debug.Log("Patrol State");
-                    Debug.Log("We are < color = green > green </ color > with envy");
-                    currentState = EnemyState.Patrol;
-                    
+
+                if (player != null) {
+
+                    if (Vector3.Distance(transform.position, player.position) < detectionRange) {
+                        // Debug.Log("Patrol State");
+                        // Debug.Log("We are < color = green > green </ color > with envy");
+                        currentState = EnemyState.Patrol;
+
+                    }
                 }
 
                 break;
@@ -79,75 +88,69 @@ public class EnemyAI : MonoBehaviour
                 // Implement Patrol behavior here (e.g., walk a predefined path)
                 // enemyColor.material.SetColor("_Color", Color.yellow);
                 // enemyColor.material.SetColor("_Color", Color.red);
+                if (player != null) {
 
-                transform.Translate(Vector3.right * direction * enemySpeed * Time.deltaTime);
+                    transform.Translate(Vector3.right * (direction * enemySpeed * Time.deltaTime));
 
-                // 1. liikkuu vasemmalle 2. liikkuu oikealle
-                if (transform.position.x < startingPosition - leftBoundary)
-                {
-                    direction = 1;
-                    
+                    // 1. liikkuu vasemmalle 2. liikkuu oikealle
+                    if (transform.position.x < startingPosition - leftBoundary) {
+                        direction = 1;
+
+                    }
+                    else if (transform.position.x > startingPosition + rightBoundary) {
+                        direction = -1;
+                    }
+
+                    if (hasLineOfSight && isAtDistance) {
+                        // Debug.Log("Chase State");
+                        currentState = EnemyState.Chase;
+                    }
+
+                    // Back to Idle
+                    if (Vector3.Distance(transform.position, player.position) > detectionRange * 1.25) {
+                        // Debug.Log("Idle State");
+                        currentState = EnemyState.Idle;
+                    }
                 }
-                else if (transform.position.x > startingPosition + rightBoundary)
-                {
-                    direction = -1;                  
-                }
-
-                if (hasLineOfSight && isAtDistance)
-                {
-                    Debug.Log("Chase State");
-                    currentState = EnemyState.Chase;
-                }
-
-                // Back to Idle
-                if (Vector3.Distance(transform.position, player.position) > detectionRange * 1.25)
-                {
-                    Debug.Log("Idle State");
-                    currentState = EnemyState.Idle;
-                }
-
                 break;
          
             case EnemyState.Chase:
                 // Implement Chase behavior here (e.g., move towards the player)
                 // enemyColor.material.SetColor("_Color", Color.red);
-                          
-                if (transform.position.x == playerPos.x)
-                {
-                    currentState = EnemyState.Patrol;
-                }
+                if (player != null) {
 
-                if (Vector3.Distance(transform.position, player.position) > chaseDistance)
-                {
-                    currentState = EnemyState.Patrol; //Go back to patrol if player gets too far
-                    Debug.Log("Patrol state");
-                    // Debug.Log(playerPos);
-                }
-
-                if (hasLineOfSight == true)
-                {
-                    playerPos = new Vector3((player.transform.position.x - 0.5f), 1, player.transform.position.z);
-
-                    transform.position = Vector2.MoveTowards(transform.position, playerPos, chaseSpeed * Time.deltaTime);                   
-                }
-
-                else
-                {
-                    if (Vector3.Distance(transform.position, player.position) < 4f)
-                    {
-                        if ((transform.position.y + 0.05f) < player.transform.position.y)
-                        {
-                            Debug.Log("LookFor State");
-                            currentState = EnemyState.LookFor;
-                        }
-                        
+                    if (transform.position.x == playerPos.x && player != null) {
+                        currentState = EnemyState.Patrol;
                     }
 
-                    else
-                    {
-                        Debug.Log("Patrol State");
-                        currentState = EnemyState.Patrol;
-                    }                  
+
+                    if (Vector3.Distance(transform.position, player.position) > chaseDistance) {
+                        currentState = EnemyState.Patrol; //Go back to patrol if player gets too far
+
+                        // Debug.Log("Patrol state");
+                        // Debug.Log(playerPos);
+                    }
+
+                    if (hasLineOfSight == true) {
+                        playerPos = new Vector3((player.transform.position.x - 0.5f), 1, player.transform.position.z);
+
+                        transform.position = Vector2.MoveTowards(transform.position, playerPos, chaseSpeed * Time.deltaTime);
+                    }
+
+                    else {
+                        if (Vector3.Distance(transform.position, player.position) < 4f) {
+                            if ((transform.position.y + 0.05f) < player.transform.position.y) {
+                                // Debug.Log("LookFor State");
+                                currentState = EnemyState.LookFor;
+                            }
+
+                        }
+
+                        else {
+                            // Debug.Log("Patrol State");
+                            currentState = EnemyState.Patrol;
+                        }
+                    }
                 }
                 break;
 
@@ -156,13 +159,13 @@ public class EnemyAI : MonoBehaviour
 
                 if (hasLineOfSight && transform.position.y == player.position.y && isAtDistance)
                 {
-                    Debug.Log("Chase State");
+                    // Debug.Log("Chase State");
                     currentState = EnemyState.Chase;
                 }
 
                 else if (hasLineOfSight == false && Vector3.Distance(transform.position, player.position) > chaseDistance / 2)
                 {
-                    Debug.Log("Patrol State");
+                    // Debug.Log("Patrol State");
                     currentState = EnemyState.Patrol;
                 }
 

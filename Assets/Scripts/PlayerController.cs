@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum PlayerState
 {
@@ -22,6 +23,7 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheckTransform;
     public PlayerActive playerActive;
     public AudioSource audioSource;
+    public GameObject AudioManagerObject;
     
     // Score
     public int score = 0;
@@ -49,60 +51,29 @@ public class PlayerController : MonoBehaviour
         Time.timeScale = 1;
         player = GameObject.FindGameObjectWithTag("Player");
         rb = player.GetComponent<Rigidbody>();
+        // audioSource = GameObject.FindGameObjectWithTag("WalkAudioSource");
+        // audioSource = audioSource.GetComponent<AudioSource>();
+
+        AudioManagerObject = GameObject.FindGameObjectWithTag("AudioSourceTag");
+        audioSource = AudioManagerObject.transform.GetChild(2).gameObject.GetComponent<AudioSource>();
+        Debug.Log(audioSource.gameObject.name);
+
     }
 
     void Update()
     {
-        if (isGrounded != checkit) {
-            checkit = isGrounded;
-
-            // print("my bool has changed to: " + isGrounded);
-            // audioSource.
-            if (isGrounded == true) {
-                // Debug.Log("landed");
-                AudioManager.Instance.playSFX("Jump");
-
-            }
-        }
-
-        if (IsMoving && isGrounded) {
-            
-            if (!audioSource.isPlaying && IsMoving)
-            {
-                // AudioManager.Instance.playSFX("Walk");
-                AudioManager.Instance.playWalk("Walk");
-            }
-
-            else {
-                // audioSource.Stop();
-            }
-        }
-
-        else {
-            // audioSource.gameObject.SetActive(false);
-            audioSource.Stop();
-            // Debug.Log("audio stop");
-        }
-        
-        
-        
         
 
-        if (rb.linearVelocity.y == 0 && rb.linearVelocity.x > 0.1f || rb.linearVelocity.x < -0.1f) {
+        if (rb.linearVelocity.y < 0.1f && rb.linearVelocity.x > 0.1f || rb.linearVelocity.x < -0.1f) {
             IsMoving = true;
         }
 
         else {
             IsMoving = false;
         }
-
-
-
+        
         switch (currentState) {
             case PlayerState.Idle:
-                // checkit = false;
-                // Debug.Log("PlayerState = Idle");
-                // isJumping = false;
                 
                 if (isGrounded == true && Input.GetKeyDown(KeyCode.Space)) {
                     currentState = PlayerState.Jump;
@@ -119,13 +90,13 @@ public class PlayerController : MonoBehaviour
                 }
                 
                 if (Input.GetKey(KeyCode.A)) {                 
-                    rb.AddForce(Vector3.left * (moveSpeed * Time.deltaTime), ForceMode.VelocityChange);                  
+                    rb.AddForce(Vector3.left * (moveSpeed * Time.deltaTime), ForceMode.Acceleration);                  
                     // Debug.Log("Move left");
                 }
 
                 else if (Input.GetKey(KeyCode.D)) 
                 {                 
-                    rb.AddForce(Vector3.right * (moveSpeed * Time.deltaTime), ForceMode.VelocityChange);
+                    rb.AddForce(Vector3.right * (moveSpeed * Time.deltaTime), ForceMode.Acceleration);
                     // Debug.Log("Move right");
                 }
                 
@@ -142,17 +113,19 @@ public class PlayerController : MonoBehaviour
 
                     if (rb.linearVelocity.x > 0.1)
                     {
-                        rb.AddForce(-movementDirection * stopForce);
+                        // rb.AddForce(-movementDirection * stopForce);
+                        rb.AddForce(Vector3.left * (stopForce * Time.deltaTime), ForceMode.VelocityChange);
                     }
 
                     else if (rb.linearVelocity.x < -0.1)
                     {
-                        rb.AddForce(-movementDirection * stopForce);
+                        // rb.AddForce(-movementDirection * stopForce);
+                        rb.AddForce(Vector3.right * (stopForce * Time.deltaTime), ForceMode.VelocityChange);
                     }
 
                     else
                     {
-                        rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+                        // rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
                         // Debug.Log("Stopped");
                     }
                 }
@@ -193,12 +166,51 @@ public class PlayerController : MonoBehaviour
         else
         {
             isGrounded = true;
-            // mybool = true;
+            
+            if (IsMoving && isGrounded) {
+            
+                if (!audioSource.isPlaying && IsMoving && rb.linearVelocity.magnitude > 0.5f)
+                {
+                    // AudioManager.Instance.playSFX("Walk");
+                    AudioManager.Instance.playWalk("Walk");
+                }
+
+                else {
+                    // audioSource.Stop();
+                }
+            }
+
+            else {
+
+                if (audioSource != null) {
+                    audioSource.Stop();
+                }
+            }
+            
+            
         }
                        
         if (rb.linearVelocity.magnitude > 0) {
             rb.linearVelocity = new Vector2(Mathf.Clamp(rb.linearVelocity.x, -maxMoveSpeed , maxMoveSpeed), rb.linearVelocity.y);          
-        }    
+        }
+        
+        // Debug.Log(rb.linearVelocity.y);
+        
+        // landing sound
+        if (isGrounded != checkit) {
+            checkit = isGrounded;
+            if (isGrounded == true) {
+                
+                if (rb.linearVelocity.y < -3f || rb.linearVelocity.y > 3f) {
+                    AudioManager.Instance.playSFX("Jump");
+                }
+
+                else {
+                    // Debug.Log("Didnt land");
+                }
+
+            }
+        }
     }
     
     private void OnTriggerEnter(Collider other)
@@ -246,6 +258,11 @@ public class PlayerController : MonoBehaviour
             // wallJump = true;
             Debug.Log("jump = true");
         }
+        
+    }
+
+    public void OnTriggerStay(Collider other)
+    {
         
     }
 }
