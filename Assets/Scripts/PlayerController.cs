@@ -247,6 +247,7 @@ public class PlayerController : MonoBehaviour
             score++;
             scoreText.GetComponent<TextMeshProUGUI>().text = "Score: " + score.ToString();
             scoreUI.GetComponent<TextMeshProUGUI>().text = "Score: " + score.ToString();
+            AudioManager.Instance.playSFX("CoinPickUp");
             // Debug.Log(score);
             
         }
