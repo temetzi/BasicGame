@@ -156,24 +156,21 @@ public class EnemyAI : MonoBehaviour
 
             case EnemyState.LookFor:
                 // Debug.Log("look for state");
+                if (player != null) {
+                    if (hasLineOfSight && transform.position.y == player.position.y && isAtDistance) {
+                        // Debug.Log("Chase State");
+                        currentState = EnemyState.Chase;
+                    }
 
-                if (hasLineOfSight && transform.position.y == player.position.y && isAtDistance)
-                {
-                    // Debug.Log("Chase State");
-                    currentState = EnemyState.Chase;
+                    else if (hasLineOfSight == false && Vector3.Distance(transform.position, player.position) > chaseDistance / 2) {
+                        // Debug.Log("Patrol State");
+                        currentState = EnemyState.Patrol;
+                    }
+
+                    else {
+                        // currentState = EnemyState.Patrol;
+                    }
                 }
-
-                else if (hasLineOfSight == false && Vector3.Distance(transform.position, player.position) > chaseDistance / 2)
-                {
-                    // Debug.Log("Patrol State");
-                    currentState = EnemyState.Patrol;
-                }
-
-                else
-                {
-                    // currentState = EnemyState.Patrol;
-                }
-
                 break;
 
             case EnemyState.Attack:

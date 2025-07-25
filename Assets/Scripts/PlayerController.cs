@@ -1,8 +1,6 @@
 using System;
 using TMPro;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public enum PlayerState
 {
@@ -56,7 +54,7 @@ public class PlayerController : MonoBehaviour
 
         AudioManagerObject = GameObject.FindGameObjectWithTag("AudioSourceTag");
         audioSource = AudioManagerObject.transform.GetChild(2).gameObject.GetComponent<AudioSource>();
-        Debug.Log(audioSource.gameObject.name);
+        // Debug.Log(audioSource.gameObject.name);
 
     }
 

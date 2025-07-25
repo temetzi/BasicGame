@@ -8,6 +8,8 @@ public class ElevatorController : MonoBehaviour
     private bool orderElevator = false;
     public bool playerOnElevator = false;
     public float playerY;
+    public float playerX;
+    public Vector3 elevatorPosition;
 
     public bool elevatorAtTop = true;
     public bool playerAtTop;
@@ -21,9 +23,14 @@ public class ElevatorController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (player != null) {
-            player = GameObject.FindGameObjectWithTag("Player");
-        }
+        
+        player = GameObject.FindGameObjectWithTag("Player");
+        // playerX -= transform.position.x;
+
+        elevatorPosition = transform.position - transform.position;
+        // playerX -= transform.position.x;
+            
+        // Debug.Log(elevatorPosition);
         activateElevator = false;
         playerOnElevator = false;
         elevatorAtTop = false;
@@ -32,22 +39,32 @@ public class ElevatorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X) && playerOnElevator == true)
+        // Debug.Log(elevatorPosition);
+        
+        // Debug.Log(player.transform.position - transform.position);
+        // Debug.Log(elevatorPosition);
+        
+        if (Input.GetKeyDown(KeyCode.W) && playerOnElevator == true)
         {
             activateElevator = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.X) && playerOnElevator == false)
+        if (Input.GetKeyDown(KeyCode.W) && playerOnElevator == false)
         {
-            orderElevator = true;
+            if (player.transform.position.x - transform.position.x > -5f && player.transform.position.x - transform.position.x < 5f) {
+                Debug.Log("something");
+                orderElevator = true;
+            }
+            // orderElevator = true;
 
         }
 
         if (player != null) {
             playerY = player.transform.position.y;
+            
         }
 
-        if (playerY > (topPoint.transform.position.y / 2))
+        if (playerY >= (topPoint.transform.position.y / 4))
         {
             playerAtTop = true;
             // Debug.Log(topPoint.transform.position.y / 2);
@@ -99,7 +116,7 @@ public class ElevatorController : MonoBehaviour
                     // transform.position = Vector3.MoveTowards(transform.position, topPoint.transform.position, elevatorSpeed * Time.deltaTime);
                     activateElevator = false;
                     elevatorAtTop = true;
-                    Debug.Log("elevator at top");
+                    // Debug.Log("elevator at top");
 
                 }
                 // elevatorAtTop = true;
@@ -126,8 +143,6 @@ public class ElevatorController : MonoBehaviour
                 
                 if (playerOnElevator == false && orderElevator == true && playerAtTop == true)
                 {
-                    
-                    
                     //Debug.Log("Hissi tilattu yl�s");
                     if (transform.position.y >= topPoint.transform.position.y)
                     {

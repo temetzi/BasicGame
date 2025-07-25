@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem.HID;
 
@@ -92,7 +91,7 @@ public class RayCast : MonoBehaviour
                 else
                 {
                     laserLine.SetPosition(1, hitInfo.point);
-                    Debug.Log("Hit nothing");
+                    // Debug.Log("Hit nothing");
                 }
 
 
@@ -100,7 +99,7 @@ public class RayCast : MonoBehaviour
 
             else
             {
-                Debug.Log("Missed");
+                // Debug.Log("Missed");
             }
             StartCoroutine(ShootLaser());
         }
@@ -109,7 +108,7 @@ public class RayCast : MonoBehaviour
         // Ensure the camera is assigned
         if (mainCamera == null)
         {
-            Debug.LogError("Main camera not assigned!");
+            // Debug.LogError("Main camera not assigned!");
             return;
         }      
 
