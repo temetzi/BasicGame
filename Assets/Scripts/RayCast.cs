@@ -25,7 +25,7 @@ public class RayCast : MonoBehaviour
     {       
 
         if (Input.GetKeyDown(KeyCode.Mouse0)) {
-
+            AudioManager.Instance.playSFX("Shoot");
             // Shoot();
             Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             mouseWorldPosition -= transform.position;
@@ -53,7 +53,7 @@ public class RayCast : MonoBehaviour
             laserLine.endWidth = 0.1f;
 
             // Debug.DrawRay(transform.position, mouseWorldPosition, Color.white);
-            if (Physics.Raycast(transform.position, mouseWorldPosition, out RaycastHit hitInfo, 100f, layerMask))
+            if (Physics.Raycast(transform.position, mouseWorldPosition, out RaycastHit hitInfo, Mathf.Infinity, layerMask))
             {
                 int groundLayer = LayerMask.NameToLayer("Default");
                 int destroyableLayer = LayerMask.NameToLayer("Destroyable");

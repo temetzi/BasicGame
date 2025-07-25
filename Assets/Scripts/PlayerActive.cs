@@ -17,6 +17,9 @@ public class PlayerActive : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
+        }
         if (player != null) {
             if (player.activeInHierarchy)
             {
@@ -33,15 +36,16 @@ public class PlayerActive : MonoBehaviour
 
     public void Win()
     {
-        Debug.Log("win");
+        // Debug.Log("win");
         // player.SetActive(false);
+        AudioManager.Instance.playSFX("Win");
         Time.timeScale = 0;
         WinScreen.SetActive(true);
     }
 
     public void Death()
     {
-        Debug.Log("dead");
+        // Debug.Log("dead");
         cameraController.UnParentCamera();
         // player.SetActive(false);
         Destroy(player);
